@@ -2,6 +2,7 @@ fastapi
 uvicorn
 transformers
 pydantic
+torch
 pytest - # for testing
 httpx - # for making my HTTP requests in tests
 pyyaml - # for my YAML configuration
