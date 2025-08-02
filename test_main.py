@@ -9,7 +9,7 @@ def test_valid_completion_gpt2():
         json={
             "model": "gpt2",
             "prompt": "What is the capital of Morocco?",
-            "max_tokens": 10
+            "max_new_tokens": 10  # ✅ fixed key
         }
     )
     assert response.status_code == 200
@@ -23,7 +23,7 @@ def test_invalid_model():
         json={
             "model": "mistral", 
             "prompt": "What is the capital of Morocco?",
-            "max_tokens": 10
+            "max_new_tokens": 10  # ✅ fixed key
         }
     )
     assert response.status_code == 404
@@ -35,7 +35,7 @@ def test_empty_prompt():
         json={
             "model": "gpt2",
             "prompt": " ",
-            "max_tokens": 10
+            "max_new_tokens": 10  # ✅ fixed key
         }
     )
     assert response.status_code == 400
