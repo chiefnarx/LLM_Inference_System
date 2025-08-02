@@ -1,8 +1,8 @@
+torch==2.1.0+cpu
 fastapi
 uvicorn
 transformers
 pydantic
-torch
-pytest - # for testing
-httpx - # for making my HTTP requests in tests
-pyyaml - # for my YAML configuration
+pytest 
+httpx  
+pyyaml

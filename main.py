@@ -6,19 +6,19 @@ import yaml
 from datetime import datetime
 import time
 import uuid
+import torch
 
 app = FastAPI()
 
-# Define the input format for /v1/completions
+# Input format for /v1/completions
 class CompletionRequest(BaseModel):
     model: str
     prompt: str
-    max_tokens: Optional[int] = 16
+    max_new_tokens: Optional[int] = 16
     temperature: Optional[float] = 1.0
 
-# Load and store models in a dictionary
+# Storing the models in a dictionary
 model_registry = {}
-
 
 def load_models():
     with open("models.yaml", "r") as f:
@@ -33,8 +33,6 @@ def load_models():
             do_sample=True
         )
 
-
-# Run model loading at startup
 load_models()
 
 @app.get("/")
@@ -49,29 +47,28 @@ def create_completion(request: CompletionRequest):
         available = ", ".join(model_registry.keys())
         raise HTTPException(
             status_code=404,
-            detail=f"Model '{model_name}' not found. Here are the available models: {available}"
+            detail=f"Model '{model_name}' not found. Available models: {available}"
         )
 
     if not request.prompt or request.prompt.strip() == "":
         raise HTTPException(status_code=400, detail="Prompt cannot be empty.")
 
-    if request.max_tokens is None or request.max_tokens > 512:
-        raise HTTPException(status_code=400, detail="max_tokens must be between 1 and 512.")
+    if request.max_new_tokens is None or request.max_new_tokens > 512:
+        raise HTTPException(status_code=400, detail="max_new_tokens must be between 1 and 512.")
 
     try:
-        generator = model_registry[model_name]  # <-- This line was missing
+        generator = model_registry[model_name]
 
         output = generator(
             request.prompt,
-            max_length=request.max_tokens,
+            max_new_tokens=request.max_new_tokens,
             temperature=request.temperature,
             num_return_sequences=1
         )
 
         generated_text = output[0]["generated_text"]
 
-
-        # Fake token usage stats (we can improve this later)
+        # Token usage estimate
         prompt_tokens = len(request.prompt.split())
         completion_tokens = len(generated_text.split()) - prompt_tokens
         total_tokens = prompt_tokens + completion_tokens
