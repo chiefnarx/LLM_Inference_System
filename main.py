@@ -1,12 +1,10 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional
-from transformers import pipeline, set_seed
+from transformers import pipeline
 import yaml
-from datetime import datetime
 import time
 import uuid
-import torch
 
 app = FastAPI()
 
