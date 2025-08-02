@@ -3,8 +3,10 @@ from pydantic import BaseModel
 from typing import Optional
 from transformers import pipeline
 import yaml
+from datetime import datetime
 import time
 import uuid
+import torch
 
 app = FastAPI()
 
@@ -64,7 +66,8 @@ def create_completion(request: CompletionRequest):
             num_return_sequences=1
         )
 
-        generated_text = output[0]["generated_text"]
+        # ✅ Fallback for compatibility with different transformers versions
+        generated_text = output[0].get("generated_text") or output[0].get("text")
 
         # Token usage estimate
         prompt_tokens = len(request.prompt.split())
