@@ -7,6 +7,7 @@ from datetime import datetime
 import time
 import uuid
 import torch
+import traceback  # ✅ For full error logging
 
 app = FastAPI()
 
@@ -17,7 +18,7 @@ class CompletionRequest(BaseModel):
     max_new_tokens: Optional[int] = 16
     temperature: Optional[float] = 1.0
 
-# Storing the models in a dictionary
+# Store models in memory
 model_registry = {}
 
 def load_models():
@@ -63,13 +64,12 @@ def create_completion(request: CompletionRequest):
             request.prompt,
             max_new_tokens=request.max_new_tokens,
             temperature=request.temperature,
+            pad_token_id=50256,  # ✅ Fix for transformers 4.29+ if pad token is missing
             num_return_sequences=1
         )
 
-        # ✅ Fallback for compatibility with different transformers versions
-        generated_text = output[0].get("generated_text") or output[0].get("text")
+        generated_text = output[0]["generated_text"]
 
-        # Token usage estimate
         prompt_tokens = len(request.prompt.split())
         completion_tokens = len(generated_text.split()) - prompt_tokens
         total_tokens = prompt_tokens + completion_tokens
@@ -95,4 +95,5 @@ def create_completion(request: CompletionRequest):
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print("Error during completion:\n", traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"{str(e)}")
