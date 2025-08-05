@@ -7,8 +7,9 @@ from datetime import datetime
 import time
 import uuid
 import torch
-import traceback  # For full error logging
-import numpy 
+import traceback
+import numpy
+import os  
 
 app = FastAPI()
 
@@ -26,7 +27,13 @@ def load_models():
     with open("models.yaml", "r") as f:
         config = yaml.safe_load(f)
 
+    # NEW: Read environment variable to optionally load only one model
+    default_model = os.getenv("DEFAULT_MODEL")
+
     for name, info in config["models"].items():
+        if default_model and name != default_model:
+            continue  # Skip other models if a default is specified
+
         model_id = info["id"]
         print(f"Loading model: {name} from {model_id}")
         model_registry[name] = pipeline(
@@ -79,7 +86,6 @@ def create_completion(request: CompletionRequest):
                 generated_text = generator.tokenizer.decode(generated_ids, skip_special_tokens=True)
             else:
                 raise HTTPException(status_code=500, detail="Model output format not recognized.")
-
 
         prompt_tokens = len(request.prompt.split())
         completion_tokens = len(generated_text.split()) - prompt_tokens
