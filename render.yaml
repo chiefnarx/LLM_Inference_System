@@ -1,11 +1,8 @@
 services:
   - type: web
     name: llm-inference-api
-    env: python
+    env: docker
     plan: free
-    buildCommand: ""
-    startCommand: uvicorn main:app --host 0.0.0.0 --port 8000
-    runtime: docker
     repo: https://github.com/chiefnarx/LLM_Inference_System
     branch: main
     autoDeploy: true
