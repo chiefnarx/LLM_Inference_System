@@ -7,7 +7,7 @@ from datetime import datetime
 import time
 import uuid
 import torch
-import traceback  # ✅ For full error logging
+import traceback  # For full error logging
 
 app = FastAPI()
 
@@ -64,11 +64,20 @@ def create_completion(request: CompletionRequest):
             request.prompt,
             max_new_tokens=request.max_new_tokens,
             temperature=request.temperature,
-            pad_token_id=50256,  # ✅ Fix for transformers 4.29+ if pad token is missing
+            pad_token_id=50256,
             num_return_sequences=1
         )
 
-        generated_text = output[0]["generated_text"]
+        try:
+            generated_text = output[0]["generated_text"]
+        except KeyError:
+            generated_ids = output[0].get("generated_token_ids")
+            if generated_ids is not None:
+                if torch.is_tensor(generated_ids):
+                    generated_ids = generated_ids.tolist()
+                generated_text = generator.tokenizer.decode(generated_ids, skip_special_tokens=True)
+            else:
+                raise HTTPException(status_code=500, detail="Model output format not recognized.")
 
         prompt_tokens = len(request.prompt.split())
         completion_tokens = len(generated_text.split()) - prompt_tokens
