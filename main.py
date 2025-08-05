@@ -80,6 +80,7 @@ def create_completion(request: CompletionRequest):
             else:
                 raise HTTPException(status_code=500, detail="Model output format not recognized.")
 
+
         prompt_tokens = len(request.prompt.split())
         completion_tokens = len(generated_text.split()) - prompt_tokens
         total_tokens = prompt_tokens + completion_tokens
