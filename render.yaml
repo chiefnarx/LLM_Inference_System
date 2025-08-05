@@ -1,7 +1,7 @@
 services:
   - type: web
     name: llm-inference-api
-    env: docker
+    env: docker     # ✅ Correct way to signal Docker usage
     plan: free
     repo: https://github.com/chiefnarx/LLM_Inference_System
     branch: main
