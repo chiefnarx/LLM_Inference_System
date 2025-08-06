@@ -27,13 +27,13 @@ def load_models():
     with open("models.yaml", "r") as f:
         config = yaml.safe_load(f)
 
-    # Read environment variable on Render to optionally load only one model
+    # Read environment variable on Render to optionally load only one model.
     default_model = os.getenv("DEFAULT_MODEL")
 
     for name, info in config["models"].items():
         if default_model and name != default_model:
             continue  
-        # Skip other models if a default is specified (which I did not specify, btw)
+        # Skip other models if a default is specified (which I did not specify, btw).
 
         model_id = info["id"]
         print(f"Loading model: {name} from {model_id}")
@@ -55,15 +55,13 @@ def create_completion(request: CompletionRequest):
 
     if model_name not in model_registry:
         available = ", ".join(model_registry.keys())
-        raise HTTPException(
-            status_code=404,
-            detail=f"Model '{model_name}' not found. Available models: {available}"
-        )
+        raise HTTPException(status_code=404, detail=f"Model '{model_name}' not found. Available models: {available}.")
 
     if not request.prompt or request.prompt.strip() == "":
         raise HTTPException(status_code=400, detail="Prompt cannot be empty.")
 
-    if request.max_new_tokens is None or request.max_new_tokens > 512:
+    # if request.max_new_tokens is None or request.max_new_tokens > 512:
+    if  request.max_new_tokens > 512:
         raise HTTPException(status_code=400, detail="max_new_tokens must be between 1 and 512.")
 
     try:
