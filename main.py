@@ -13,7 +13,7 @@ import os
 
 app = FastAPI()
 
-# Input format for /v1/completions
+# Inputting format for /v1/completions
 class CompletionRequest(BaseModel):
     model: str
     prompt: str
@@ -27,12 +27,13 @@ def load_models():
     with open("models.yaml", "r") as f:
         config = yaml.safe_load(f)
 
-    # NEW: Read environment variable to optionally load only one model
+    # Read environment variable on Render to optionally load only one model
     default_model = os.getenv("DEFAULT_MODEL")
 
     for name, info in config["models"].items():
         if default_model and name != default_model:
-            continue  # Skip other models if a default is specified
+            continue  
+        # Skip other models if a default is specified (which I did not specify, btw)
 
         model_id = info["id"]
         print(f"Loading model: {name} from {model_id}")
