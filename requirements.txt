@@ -1,0 +1,9 @@
+torch==2.2.0
+fastapi
+uvicorn
+transformers
+pydantic
+pytest 
+httpx  
+pyyaml
+numpy==1.26.4

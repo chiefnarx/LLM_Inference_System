@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.pyc
+.cache/
+*.safetensors
+*.bin
+*.pth
+*.pt
+wheels/

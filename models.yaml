@@ -1,0 +1,7 @@
+models:
+  gpt2:
+    id: gpt2
+  distilgpt2:
+    id: distilgpt2
+  gptneo:
+    id: EleutherAI/gpt-neo-125M

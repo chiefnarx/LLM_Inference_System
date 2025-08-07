@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: llm-inference-api
+    env: docker  
+    plan: free
+    repo: https://github.com/chiefnarx/LLM_Inference_System
+    branch: main
+    autoDeploy: true
+
+
